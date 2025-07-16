@@ -89,6 +89,42 @@ app.post("/api/transaction/receipt", async (req, res) => {
   } catch (error) {}
 });
 
+app.post("/api/transaction/delivery", async (req, res) => {
+  try {
+    const warehouse = await Warehouse.find({
+      location_code: req.body.warehouse_code,
+    });
+    if (!warehouse) {
+      return res.status(404).json({
+        success: false,
+        message: "Location Doesn’t belong to a specific warehouse",
+      });
+    }
+    const products = req.body.products;
+    for (const product of products) {
+      const p = Product.find(product.product_code);
+      if (p.dty < procudt.qty) {
+        return res.status(404).json({
+          success: false,
+          message: "Insufficient Qty at given Location",
+        });
+      }
+      if (product.qty == p.qty) {
+        Product.deleteOne(product.product_code);
+      } else {
+        p.qty = p.qty - ProcessingInstruction.qty;
+        p.save();
+      }
+
+      p.save();
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Products added successfully",
+    });
+  } catch (error) {}
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
