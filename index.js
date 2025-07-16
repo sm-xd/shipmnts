@@ -18,6 +18,9 @@ app.get("/", (req, res) => {
 
 app.post("/api/create_location", async (req, res) => {
   try {
+
+    
+
     if (req.body.parent_location_code == null) {
       const warehouse = new Warehouse({
         location_code: req.body.location_code,
@@ -25,6 +28,27 @@ app.post("/api/create_location", async (req, res) => {
       await warehouse.save();
       res.status(201).json(warehouse);
     } else {
+
+      const sto = await Storage.findOne(req.body.location_code)
+    if(sto != null){
+      
+    }
+
+      const parent = await Warehouse.findOne({
+        location_code: req.body.parent_location_code,
+      });
+      if (parent == null) {
+        const st = await Storage.findOne({
+          location_code: req.body.parent_location_code,
+        });
+        console.log(st)
+        if (st == null) {
+          return res.json({
+            success: false,
+            message: "Parent location doesn't exist",
+          });
+        }
+      }
       console.log(req.body);
       const storage = new Storage(req.body);
       await storage.save();
