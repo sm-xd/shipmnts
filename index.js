@@ -18,9 +18,6 @@ app.get("/", (req, res) => {
 
 app.post("/api/create_location", async (req, res) => {
   try {
-
-    
-
     if (req.body.parent_location_code == null) {
       const warehouse = new Warehouse({
         location_code: req.body.location_code,
@@ -28,11 +25,13 @@ app.post("/api/create_location", async (req, res) => {
       await warehouse.save();
       res.status(201).json(warehouse);
     } else {
-
-      const sto = await Storage.findOne(req.body.location_code)
-    if(sto != null){
-      
-    }
+      const sto = await Storage.findOne({location_code : req.body.location_code });
+      if (sto != null) {
+        return res.json({
+          success: false,
+          message: "Location Code Must Be Unique",
+        });
+      }
 
       const parent = await Warehouse.findOne({
         location_code: req.body.parent_location_code,
@@ -41,7 +40,7 @@ app.post("/api/create_location", async (req, res) => {
         const st = await Storage.findOne({
           location_code: req.body.parent_location_code,
         });
-        console.log(st)
+        console.log(st);
         if (st == null) {
           return res.json({
             success: false,
