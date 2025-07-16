@@ -103,7 +103,7 @@ app.post("/api/transaction/receipt", async (req, res) => {
     const products = req.body.products;
     for (const product of products) {
       const p = new Product(product);
-      p.save();
+      await p.save();
     }
     return res.status(200).json({
       success: true,
@@ -125,7 +125,8 @@ app.post("/api/transaction/delivery", async (req, res) => {
     }
     const products = req.body.products;
     for (const product of products) {
-      const p = Product.find(product.product_code);
+      const p = await Product.findOne({product_code : product.product_code});
+      console.log(p)
       if (p.dty < procudt.qty) {
         return res.status(404).json({
           success: false,
@@ -133,13 +134,15 @@ app.post("/api/transaction/delivery", async (req, res) => {
         });
       }
       if (product.qty == p.qty) {
-        Product.deleteOne(product.product_code);
+        await Product.deleteOne(product.product_code);
       } else {
         p.qty = p.qty - ProcessingInstruction.qty;
-        p.save();
+        await p.save();
       }
 
-      p.save();
+      await p.save();
+      return res.json({
+        success: true,})
     }
     return res.status(200).json({
       success: true,
