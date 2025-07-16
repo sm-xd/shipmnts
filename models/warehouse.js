@@ -5,6 +5,9 @@ const WarehouseSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  childs: {
+    type: mongoose.Schema.Types.ObjectId, ref: 'Storage'
+  }
 });
 
 export const Warehouse = mongoose.model('warehouse', WarehouseSchema)

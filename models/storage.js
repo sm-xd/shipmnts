@@ -10,7 +10,7 @@ const StorageSchema = new mongoose.Schema({
     required: true
   },
   childs: {
-    type: mongoose.Schema.Types.ObjectId, ref: 'Warehouse'
+    type: mongoose.Schema.Types.ObjectId, ref: 'Storage'
   }
 });
 export const Storage = mongoose.model('Storage', StorageSchema)
